@@ -6,12 +6,15 @@ import router from './router'
 import store from './store'
 import './assets/css/index.styl'
 import './assets/css/mixins.styl'
-import { Dialog } from 'vant';
-import 'vant/lib/dialog/style/index'
+import { Dialog, Button } from 'vant';
+import 'vant/lib/button/style';
+import 'vant/lib/dialog/style'
+import '@/mock/mockServer'
 
 
 import VueLazyload from 'vue-lazyload'
-Vue.use(Dialog);
+Vue.use(Button);
+Vue.use(Dialog)
 Vue.use(VueLazyload)
 // or with options
 Vue.use(VueLazyload, {

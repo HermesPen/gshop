@@ -3,12 +3,18 @@
     <section class="msite">
       <!--首页头部-->
       <Header :title="LocationCity">
-        <span class="header_search" slot="left">
+        <router-link class="header_search" slot="left" to="/search">
           <i class="iconfont icon-sousuo"></i>
-        </span>
-        <span class="header_login" slot="right">
-          <span class="header_login_text">登录|注册</span>
-        </span>
+        </router-link>
+        <router-link
+          class="header_login"
+          slot="right"
+          :to="userInfo.id ? '/userinfo' : '/login'"
+        >
+          <span class="header_login_text">{{
+            userInfo.name || "登录/注册"
+          }}</span>
+        </router-link>
       </Header>
       <!--首页导航-->
       <nav class="msite_nav">
@@ -36,7 +42,7 @@
           <div class="swiper-pagination"></div>
         </div>
         <div v-else>
-          <img src="../assets/images/main_back.svg" alt="">
+          <img src="../assets/images/main_back.svg" alt="" />
         </div>
       </nav>
       <!--首页附近商家-->
@@ -99,7 +105,7 @@ export default {
   },
 
   computed: {
-    ...mapState(["categorys"]),
+    ...mapState(["categorys", "userInfo"]),
     categorysArr() {
       const { categorys } = this;
       const arr = [];

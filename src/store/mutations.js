@@ -7,7 +7,10 @@ import {
     RECEIVE_CATEGORYS,
     RECEIVE_SHOPS,
     RECEIVE_USER_INFO,
-    RESET_USER_INFO
+    RESET_USER_INFO,
+    RECEIVE_GOOD,
+    RECEIVE_INFO,
+    RECEIVE_RATING
 } from './mutations_types'
 
 export default {
@@ -20,7 +23,19 @@ export default {
     [RECEIVE_SHOPS](state, { shops }) {
         state.shops = shops
     },
-    [RECEIVE_USER_INFO](state, { user_info }) {
-        state.user_info = user_info
-    }
+    [RECEIVE_USER_INFO](state, { userInfo }) {
+        state.userInfo = userInfo
+    },
+    [RESET_USER_INFO](state) {
+        state.userInfo = {}
+    },
+    [RECEIVE_GOOD](state, { goods }) {
+        state.goods = goods
+    },
+    [RECEIVE_RATING](state, { rating }) {
+        state.rating = rating
+    },
+    [RECEIVE_INFO](state, { info }) {
+        state.info = info
+    },
 }

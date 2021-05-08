@@ -2,21 +2,27 @@
   <section class="profile">
     <Header title="我的"></Header>
     <section class="profile-number">
-      <router-link class="profile-link" to="/login">
+      <router-link
+        class="profile-link"
+        :to="userInfo.id ? '/userinfo' : '/login'"
+      >
         <div class="profile_image">
           <i class="iconfont icon-person"></i>
         </div>
         <div class="user-info">
-          <p class="user-info-top">登录/注册</p>
+          <p class="user-info-top">
+            {{ userInfo.name || userInfo._id || "登录/注册" }}
+          </p>
           <p>
             <span class="user-icon">
               <i class="iconfont icon-shouji icon-mobile"></i>
             </span>
-            <span class="icon-mobile-number">暂无绑定手机号</span>
+            <span class="icon-mobile-number">{{
+              userInfo.phone || "暂无绑定手机号"
+            }}</span>
           </p>
         </div>
-        <span class="arrow">
-          <i class="iconfont icon-jiantou1"></i> </span
+        <span class="arrow"> <i class="iconfont icon-jiantou1"></i> </span
       ></router-link>
     </section>
     <section class="profile_info_data border-1px">
@@ -87,13 +93,42 @@
         </div>
       </a>
     </section>
+    <section>
+      <van-button
+        type="primary"
+        style="width: 100%"
+        v-if="userInfo._id"
+        @click="logout"
+        >退出登录</van-button
+      >
+    </section>
   </section>
 </template>
 <script>
+import { mapState } from "vuex";
+import { Dialog } from "vant";
 import Header from "@/components/header";
 export default {
   data() {
     return {};
+  },
+  computed: {
+    ...mapState(["userInfo"]),
+  },
+  methods: {
+    logout() {
+      Dialog.confirm({
+        title: "确认退出",
+        message: "是否退出当前登录",
+      })
+        .then(() => {
+          // on confirm
+          this.$store.dispatch("logout");
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
   },
   components: { Header },
 };

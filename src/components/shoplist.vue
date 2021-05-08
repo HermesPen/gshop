@@ -10,6 +10,7 @@
           class="shop_li border-1px"
           v-for="(shop, index) in shops"
           :key="index"
+          @click="$router.push('/shops')"
         >
           <a>
             <div class="shop_left">
@@ -30,19 +31,23 @@
               </section>
               <section class="shop_rating_order">
                 <section class="shop_rating_order_left">
-                  <Star :score="shop.rating" :size="24"/>
-                  <div class="rating_section">{{shop.rating}}</div>
-                  <div class="order_section">月售{{shop.recent_order_num}}单</div>
+                  <Star :score="shop.rating" :size="24" />
+                  <div class="rating_section">{{ shop.rating }}</div>
+                  <div class="order_section">
+                    月售{{ shop.recent_order_num }}单
+                  </div>
                 </section>
                 <section class="shop_rating_order_right">
-                  <span class="delivery_style delivery_right">{{shop.delivery_mode.text}}</span>
+                  <span class="delivery_style delivery_right">{{
+                    shop.delivery_mode.text
+                  }}</span>
                 </section>
               </section>
               <section class="shop_distance">
                 <p class="shop_delivery_msg">
-                  <span>¥{{shop.float_minimum_order_amount}}起送</span>
+                  <span>¥{{ shop.float_minimum_order_amount }}起送</span>
                   <span class="segmentation">/</span>
-                  <span>配送费约¥{{shop.float_delivery_fee}}</span>
+                  <span>配送费约¥{{ shop.float_delivery_fee }}</span>
                 </p>
               </section>
             </div>
@@ -51,19 +56,19 @@
       </ul>
       <ul v-else>
         <li v-for="item in 7">
-          <img src="../assets/images/shop_back.svg" alt="">
+          <img src="../assets/images/shop_back.svg" alt="" />
         </li>
       </ul>
     </div>
   </div>
 </template>
 <script>
-import Star from './star'
+import Star from "./star";
 import { mapState, mapActions } from "vuex";
 export default {
   data() {
     return {
-      baseImageUrl: "http://cangdu.org:8001/img/",
+      baseImageUrl: "http://cangdu.org:8000/img/",
     };
   },
   computed: {
@@ -73,7 +78,7 @@ export default {
     ...mapActions(["getShops"]),
   },
 
-  components: {Star},
+  components: { Star },
   created() {
     this.getShops();
   },
@@ -184,8 +189,6 @@ export default {
               .shop_rating_order_left {
                 float: left;
                 color: #ff9a0d;
-
-                
 
                 .rating_section {
                   float: left;

@@ -7,15 +7,16 @@
 
 <script>
 import Footer from "@/components/footer";
-import { reqShops } from "@/api/index";
+import { mapActions } from "vuex";
 export default {
   name: "App",
   components: { Footer },
-
-  // mounted() {
-  //   const result = reqShops();
-  //   console.log(result);
-  // },
+  methods: {
+    ...mapActions(["getUserInfo"]),
+  },
+  mounted() {
+    this.getUserInfo();
+  },
 };
 </script>
 

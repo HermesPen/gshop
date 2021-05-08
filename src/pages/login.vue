@@ -93,8 +93,10 @@
                 />
                 <img
                   class="get_verification"
-                  src="../assets/images/captcha.svg"
+                  src="http://localhost:3000/captcha"
                   alt="captcha"
+                  @click="getCaptcha"
+                  ref="captcha"
                 />
               </section>
             </section>
@@ -112,6 +114,7 @@
 </template>
 <script>
 import AlertTip from "@/components/alerttip.vue";
+import { reqSendCode, reqPhoneLogin, reqPwLogin } from "@/api";
 export default {
   data() {
     return {
@@ -135,28 +138,45 @@ export default {
     },
   },
   methods: {
-    getCode() {
+    async getCode() {
+      // 短信验证码倒计时
       if (!this.countdown) {
         this.countdown = 30;
-        let timer = setInterval(() => {
+        this.timer = setInterval(() => {
           this.countdown--;
           if (this.countdown <= 0) {
-            clearInterval(timer);
+            clearInterval(this.timer);
           }
         }, 1000);
       }
+      // 异步获取短信验证码
+      const result = await reqSendCode(this.phone);
+      if (result.code === 1) {
+        // 显示提示
+        this.alertShow = true;
+        this.aText = result.msg;
+        // 停止计时
+        if (this.timer > 0) {
+          this.timer = 0;
+          clearInterval(this.timer);
+        }
+      }
     },
-    login() {
+    async login() {
+      let result;
       if (this.loginWay) {
         // 短信登录
         const { rightPhone, phone, code } = this;
         if (!this.rightPhone) {
           this.showAlert = true;
           this.aText = "手机号不正确";
+          return;
         } else if (!/^\d{6}$/.test(code)) {
           this.showAlert = true;
           this.aText = "验证码不正确";
+          return;
         }
+        result = await reqPhoneLogin({ phone, code });
       } else {
         // 密码登录
         const { username, pw, captcha } = this;
@@ -166,15 +186,41 @@ export default {
         } else if (!this.pw) {
           this.showAlert = true;
           this.aText = "密码不正确";
-        } else {
+          return;
+        } else if (!this.captcha) {
           this.showAlert = true;
           this.aText = "验证码不正确";
+          return;
         }
+        result = await reqPwLogin({ username, pw, captcha });
+      }
+      // 停止计时
+      if (this.timer > 0) {
+        this.timer = 0;
+        clearInterval(this.timer);
+      }
+
+      if (result.code === 0) {
+        const user = result.data;
+        // 将user保存到state
+        this.$store.dispatch("getUserInfo", user);
+        //去个人中心页面
+        this.$router.replace("/profile");
+      } else {
+        const msg = result.msg;
+        this.showAlert = true;
+        this.aText = msg;
+        this.getCaptcha();
+        this.captcha = this.code = "";
       }
     },
     closeTip() {
       this.showAlert = false;
       this.aText = "";
+    },
+    getCaptcha() {
+      this.$refs.captcha.src =
+        "http://localhost:3000/captcha?time=" + Date.now();
     },
   },
   components: { AlertTip },
