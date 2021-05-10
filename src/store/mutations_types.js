@@ -9,3 +9,5 @@ export const RESET_USER_INFO = 'reset_user_info' // 重置用户信息
 export const RECEIVE_GOOD = 'receive_good' // 接收商品数组
 export const RECEIVE_RATING = 'receive_rating' // 接受商家评价数组
 export const RECEIVE_INFO = 'receive_info' // 接收商家信息
+export const INCREMENT_ADD_FOOD = 'increment_add_food' // 增加选择的food数量
+export const DECREMENT_ADD_FOOD = 'decrement_add_food' // 减少选择的food数量

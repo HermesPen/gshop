@@ -1,13 +1,15 @@
 <template>
   <div>
     <div class="goods">
-      <div class="menu-wrapper" ref="menuWrapper">
+      <div class="menu-wrapper">
         <ul>
+          <!--current-->
           <li
             class="menu-item"
             v-for="(good, index) in goods"
             :key="index"
             :class="{ current: index === currentIndex }"
+            @click="clickMenuItem(index)"
           >
             <span class="text bottom-border-1px">
               <img class="icon" :src="good.icon" v-if="good.icon" />
@@ -17,7 +19,7 @@
         </ul>
       </div>
       <div class="foods-wrapper" ref="foodsWrapper">
-        <ul>
+        <ul ref="foodsUl">
           <li
             class="food-list-hook"
             v-for="(good, index) in goods"
@@ -29,6 +31,7 @@
                 class="food-item bottom-border-1px"
                 v-for="(food, index) in good.foods"
                 :key="index"
+                @click="showFood(food)"
               >
                 <div class="icon">
                   <img width="57" height="57" :src="food.icon" />
@@ -38,7 +41,7 @@
                   <p class="desc">{{ food.description }}</p>
                   <div class="extra">
                     <span class="count">月售{{ food.sellCount }}份</span>
-                    <span>好评率 {{ food.rating }}%</span>
+                    <span>好评率{{ food.rating }}%</span>
                   </div>
                   <div class="price">
                     <span class="now">￥{{ food.price }}</span>
@@ -46,17 +49,24 @@
                       >￥{{ food.oldPrice }}</span
                     >
                   </div>
-                  <div class="cartcontrol-wrapper">CartControl</div>
+                  <div class="cartcontrol-wrapper">
+                    <CartControl :food="food" />
+                  </div>
                 </div>
               </li>
             </ul>
           </li>
         </ul>
       </div>
+      <ShopCart />
     </div>
+    <Food :food="food" ref="food" />
   </div>
 </template>
+
 <script>
+import CartControl from "@/components/cartcontrol";
+import Food from "@/components/food";
 import BScroll from "@better-scroll/core";
 import { mapState } from "vuex";
 export default {
@@ -64,6 +74,7 @@ export default {
     return {
       scrollY: 0,
       tops: [],
+      food: {}, // 需要显示的food
     };
   },
   mounted() {
@@ -100,7 +111,7 @@ export default {
         click: true,
       });
       this.foodsScroll = new BScroll(".foods-wrapper", {
-        probeType: 2, // 因为惯性滑动不会触发
+        probeType: 3, // 因为惯性滑动不会触发
         click: true,
       });
 
@@ -133,8 +144,20 @@ export default {
       this.tops = tops;
       console.log(tops);
     },
+    // 点击切换菜单
+    changeMenuItem(index) {
+      const y = this.tops[index];
+      this.foodsScroll.scrollTo(0, -y, 200);
+    },
+    // 显示food详细
+    showFood(food) {
+      // 设置food
+      this.food = food;
+      // 显示food
+      this.$refs.food.toggleShow();
+    },
   },
-  components: {},
+  components: { CartControl, Food },
 };
 </script>
 <style scoped lang="stylus" rel="stylesheet/stylus">

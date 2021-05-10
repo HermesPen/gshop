@@ -6,7 +6,9 @@ import {
     RESET_USER_INFO,
     RECEIVE_GOOD,
     RECEIVE_RATING,
-    RECEIVE_INFO
+    RECEIVE_INFO,
+    INCREMENT_ADD_FOOD,
+    DECREMENT_ADD_FOOD
 } from './mutations_types'
 import {
     reqAddress,
@@ -90,12 +92,20 @@ export default {
         }
     },
     // 异步获取商家商品
-    async getShopGood({ commit },cb) {
+    async getShopGood({ commit }, cb) {
         const result = await reqShopGood()
         if (result.code === 0) {
             const goods = result.data
             commit(RECEIVE_GOOD, { goods })
             cb && cb()
+        }
+    },
+    // 同步更新food中的count值
+    updateFoodCount({ commit }, { isAdd, food }) {
+        if(isAdd) {
+            commit(INCREMENT_ADD_FOOD,{food})
+        } else {
+            commit(DECREMENT_ADD_FOOD,{food})
         }
     }
 }
