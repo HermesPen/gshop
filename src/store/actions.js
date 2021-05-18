@@ -8,7 +8,9 @@ import {
     RECEIVE_RATING,
     RECEIVE_INFO,
     INCREMENT_ADD_FOOD,
-    DECREMENT_ADD_FOOD
+    DECREMENT_ADD_FOOD,
+    CLEAR_CART,
+    RECEIVE_SEARCH_SHOPS
 } from './mutations_types'
 import {
     reqAddress,
@@ -18,7 +20,8 @@ import {
     reqLoginOut,
     reqShopInfo,
     reqShopRating,
-    reqShopGood
+    reqShopGood,
+    reqSearchShops
 } from '@/api'
 
 export default {
@@ -84,11 +87,12 @@ export default {
         }
     },
     // 异步获取商家评价
-    async getShopRating({ commit }) {
+    async getShopRating({ commit }, cb) {
         const result = await reqShopRating()
         if (result.code === 0) {
-            const rating = result.data
-            commit(RECEIVE_RATING, { rating })
+            const ratings = result.data
+            commit(RECEIVE_RATING, { ratings })
+            cb && cb()
         }
     },
     // 异步获取商家商品
@@ -102,10 +106,26 @@ export default {
     },
     // 同步更新food中的count值
     updateFoodCount({ commit }, { isAdd, food }) {
-        if(isAdd) {
-            commit(INCREMENT_ADD_FOOD,{food})
+        if (isAdd) {
+            commit(INCREMENT_ADD_FOOD, { food })
         } else {
-            commit(DECREMENT_ADD_FOOD,{food})
+            commit(DECREMENT_ADD_FOOD, { food })
+        }
+    },
+    // 同步清空购物车
+    clearCart({ commit }) {
+        commit(CLEAR_CART)
+    },
+    // 异步获取搜索商家列表
+    async getSearchShops({ commit, state }, keyword, cb) {
+        // 发送异步ajax请求
+        const geohash = state.latitude + ',' + state.longitude
+        const result = await reqSearchShops(geohash, keyword)
+        // 提交一个mutation
+        if (result.code === 0) {
+            const searchShops = result.data
+            commit(RECEIVE_SEARCH_SHOPS, { searchShops })
+            cb && cb()
         }
     }
 }

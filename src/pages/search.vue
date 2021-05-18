@@ -1,22 +1,87 @@
 <template>
   <section class="search">
     <Header title="搜索" />
-    <form class="search_form" action="#">
+    <form class="search_form" @submit.prevent="search">
       <input
         type="search"
         name="search"
         placeholder="请输入商家或美食名称"
         class="search_input"
+        v-model="keyword"
       />
       <input type="submit" name="submit" class="search_submit" />
     </form>
+    <section class="list" v-if="!noSearchShops">
+      <ul class="list_container">
+        <!--:to="'/shop?id='+item.id"-->
+        <router-link
+          :to="{ path: '/shop', query: { id: item.id } }"
+          tag="li"
+          v-for="item in searchShops"
+          :key="item.id"
+          class="list_li"
+        >
+          <section class="item_left">
+            <img :src="imgBaseUrl + item.image_path" class="restaurant_img" />
+          </section>
+          <section class="item_right">
+            <div class="item_right_text">
+              <p>
+                <span>{{ item.name }}</span>
+              </p>
+              <p>月售 {{ item.month_sales || item.recent_order_num }} 单</p>
+              <p>
+                {{ item.delivery_fee || item.float_minimum_order_amount }}
+                元起送 / 距离{{ item.distance }}
+              </p>
+            </div>
+          </section>
+        </router-link>
+      </ul>
+    </section>
+    <div class="search_none" v-else>很抱歉！无搜索结果</div>
   </section>
 </template>
 <script>
+import { mapState } from "vuex";
+import BScroll from "@better-scroll/core";
 import Header from "@/components/header";
 export default {
   data() {
-    return {};
+    return {
+      keyword: "",
+      imgBaseUrl: "http://cangdu.org:8001/img/",
+      noSearchShops: false,
+    };
+  },
+  computed: {
+    ...mapState(["searchShops"]),
+  },
+  methods: {
+    search() {
+      // 得到搜索关键字
+      const keyword = this.keyword.trim();
+      // 开始搜索
+      if (keyword) {
+        this.$store.dispatch("getSearchShops", keyword);
+        this._initScroll();
+      }
+      console.log(this.searchShops);
+    },
+    _initScroll() {
+      new BScroll(".list", {
+        click: true,
+      });
+    },
+  },
+  watch: {
+    getSearchShops(value) {
+      if (!value.length) {
+        this.noSearchShops = true;
+      } else {
+        this.noSearchShops = false;
+      }
+    },
   },
   components: { Header },
 };
@@ -24,29 +89,10 @@ export default {
 <style scoped lang="stylus" rel="stylesheet/stylus">
 @import '../assets/css/mixins.styl';
 
-.search { // 搜索
+.search {
   width: 100%;
-  overflow hidden
-
-  .header {
-    background-color: #02a774;
-    position: fixed;
-    z-index: 100;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 45px;
-
-    .header_title {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 50%;
-      color: #fff;
-      text-align: center;
-    }
-  }
+  height: 100%;
+  overflow: hidden;
 
   .search_form {
     clearFix();
@@ -79,6 +125,53 @@ export default {
         background-color: #02a774;
       }
     }
+  }
+
+  .list {
+    .list_container {
+      background-color: #fff;
+
+      .list_li {
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+        border-bottom: 1px solid $bc;
+
+        .item_left {
+          margin-right: 10px;
+
+          .restaurant_img {
+            width: 50px;
+            height: 50px;
+            display: block;
+          }
+        }
+
+        .item_right {
+          font-size: 12px;
+          flex: 1;
+
+          .item_right_text {
+            p {
+              line-height: 12px;
+              margin-bottom: 6px;
+
+              &:last-child {
+                margin-bottom: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .search_none {
+    margin: 0 auto;
+    color: #333;
+    background-color: #fff;
+    text-align: center;
+    margin-top: 0.125rem;
   }
 }
 </style>

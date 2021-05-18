@@ -10,20 +10,25 @@ import { Dialog, Button } from 'vant';
 import 'vant/lib/button/style';
 import 'vant/lib/dialog/style'
 import '@/mock/mockServer'
-
-
+import './utils/time'
+import Viewer from 'v-viewer'
+import 'viewerjs/dist/viewer.css'
 import VueLazyload from 'vue-lazyload'
+import loading from './assets/images/loading.gif'
 Vue.use(Button);
 Vue.use(Dialog)
-Vue.use(VueLazyload)
 // or with options
 Vue.use(VueLazyload, {
   preLoad: 1.3,
   error: 'dist/error.png',
-  loading: 'dist/loading.gif',
+  loading: loading,
   attempt: 1
 })
-
+Vue.use(Viewer, {
+  defaultOptions: {
+    zIndex: 9999
+  }
+})
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

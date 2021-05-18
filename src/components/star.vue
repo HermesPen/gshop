@@ -28,7 +28,7 @@ export default {
       if ((score - scoreInteger) * 10 >= 5) {
         sc.push("half");
       }
-      if (sc.length < 5) {
+      while (sc.length < 5) {
         sc.push("off");
       }
       return sc;

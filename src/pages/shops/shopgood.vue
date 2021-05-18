@@ -9,7 +9,7 @@
             v-for="(good, index) in goods"
             :key="index"
             :class="{ current: index === currentIndex }"
-            @click="clickMenuItem(index)"
+            @click="changeMenuItem(index)"
           >
             <span class="text bottom-border-1px">
               <img class="icon" :src="good.icon" v-if="good.icon" />
@@ -67,6 +67,7 @@
 <script>
 import CartControl from "@/components/cartcontrol";
 import Food from "@/components/food";
+import ShopCart from "@/components/shopcart";
 import BScroll from "@better-scroll/core";
 import { mapState } from "vuex";
 export default {
@@ -157,7 +158,7 @@ export default {
       this.$refs.food.toggleShow();
     },
   },
-  components: { CartControl, Food },
+  components: { CartControl, Food, ShopCart },
 };
 </script>
 <style scoped lang="stylus" rel="stylesheet/stylus">
